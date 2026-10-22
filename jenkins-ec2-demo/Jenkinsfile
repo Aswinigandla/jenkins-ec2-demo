@@ -1,0 +1,38 @@
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                echo 'Code downloaded from GitHub'
+            }
+        }
+
+        stage('Verify Application') {
+            steps {
+                bat 'dir'
+                bat 'if not exist index.html exit /b 1'
+                bat 'if not exist README.md exit /b 1'
+                echo 'Application files verified'
+            }
+        }
+
+        stage('Package Application') {
+            steps {
+                archiveArtifacts artifacts: 'index.html,README.md',
+                                 fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS: Application is ready!'
+        }
+        failure {
+            echo 'FAILED: Check Console Output.'
+        }
+    }
+}
