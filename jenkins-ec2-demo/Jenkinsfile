@@ -1,4 +1,5 @@
 
+
 pipeline {
     agent any
 
@@ -12,16 +13,18 @@ pipeline {
 
         stage('Verify Application') {
             steps {
-                bat 'dir'
-                bat 'if not exist index.html exit /b 1'
-                bat 'if not exist README.md exit /b 1'
-                echo 'Application files verified'
+                dir('jenkins-ec2-demo') {
+                    bat 'dir'
+                    bat 'if not exist index.html exit /b 1'
+                    bat 'if not exist README.md exit /b 1'
+                    echo 'Application files verified successfully'
+                }
             }
         }
 
         stage('Package Application') {
             steps {
-                archiveArtifacts artifacts: 'index.html,README.md',
+                archiveArtifacts artifacts: 'jenkins-ec2-demo/index.html,jenkins-ec2-demo/README.md',
                                  fingerprint: true
             }
         }
